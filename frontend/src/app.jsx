@@ -11,7 +11,7 @@ dotenv.config();
 
 
 const api = axios.create({
-    baseURL: "http://localhost:5010"
+    baseURL: process.env.backEndUrl
 });
 
 export default function Home() {

@@ -4,9 +4,16 @@ import { YtDlp } from "ytdlp-nodejs";
 import { limparTitulo } from "./utils/limpar.js";
 import { createReadStream, promises as fs } from "fs";
 import path from "path";
+import dotenv from "dotenv"
+
+dotenv.config();
 
 const server = express();
-server.use(cors({ exposedHeaders: ["Content-Disposition"] }));
+
+server.use(cors({ 
+    exposedHeaders: ["Content-Disposition"],
+    origin: process.env.frontEndUrl 
+}));
 server.use(express.json());
 
 const installer = new YtDlp();
