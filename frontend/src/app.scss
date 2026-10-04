@@ -1,0 +1,244 @@
+$bg: #141a22;
+$bg-card: rgba(255, 255, 255, 0.06);
+$purple: #b45cff;
+$blue: #2f8cff;
+$orange: #ffa51f;
+$text: #e8ecf2;
+$muted: #9aa3b2;
+
+// Reset global: remove a borda branca (margin padrão do body) e o overflow lateral
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+  background: $bg;
+}
+
+.home {
+  min-height: 100vh;
+  width: 100%;
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  background:
+    radial-gradient(circle at 15% 55%, rgba(180, 92, 255, 0.12), transparent 45%),
+    radial-gradient(circle at 85% 40%, rgba(180, 92, 255, 0.14), transparent 45%),
+    radial-gradient(circle at 70% 90%, rgba(255, 165, 31, 0.1), transparent 40%),
+    $bg;
+  color: $text;
+  font-family: "Poppins", "Segoe UI", sans-serif;
+
+  .title {
+    margin: 0;
+    font-size: clamp(1.75rem, 6vw, 2.75rem);
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 0.03rem;
+    color: #e6d9ff;
+    text-shadow: 0 0 0.9rem rgba(180, 92, 255, 0.7);
+  }
+
+  .card {
+    width: 100%;
+    max-width: 22rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+
+    .options {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+
+      .option {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+
+        .button {
+          width: 85%;
+          aspect-ratio: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 0.4rem;
+          border-radius: 1.2rem;
+          border: 0.0625rem solid rgba(255, 255, 255, 0.18);
+          background: $bg-card;
+          backdrop-filter: blur(0.5rem);
+          color: $text;
+          cursor: pointer;
+          transition: box-shadow 0.2s, border-color 0.2s;
+
+          &:hover {
+            border-color: rgba(180, 92, 255, 0.6);
+          }
+
+          &:focus-visible {
+            outline: 0.125rem solid $blue;
+            outline-offset: 0.2rem;
+          }
+
+          .icon {
+            width: 30%;
+            aspect-ratio: 1;
+            object-fit: contain;
+          }
+
+          .name {
+            font-size: 0.9rem;
+            font-weight: 700;
+          }
+
+          &.active {
+            border-color: $purple;
+            box-shadow:
+              0 0 1.2rem rgba(180, 92, 255, 0.55),
+              inset 0 0 1rem rgba(180, 92, 255, 0.2);
+          }
+        }
+
+        .caption {
+          font-size: 0.75rem;
+          font-weight: 600;
+          color: $muted;
+        }
+      }
+    }
+
+    .url {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.7rem 0.9rem;
+      border-radius: 0.7rem;
+      border: 0.09rem solid $blue;
+      background: rgba(10, 16, 26, 0.8);
+      box-shadow: 0 0 0.9rem rgba(47, 140, 255, 0.45);
+
+      &:focus-within {
+        box-shadow: 0 0 1.2rem rgba(47, 140, 255, 0.8);
+      }
+
+      .icon {
+        width: 1.25rem;
+        height: 1.25rem;
+        flex-shrink: 0;
+        object-fit: contain;
+      }
+
+      input {
+        flex: 1;
+        min-width: 0;
+        border: 0;
+        outline: 0;
+        background: transparent;
+        color: $text;
+        font-size: 0.85rem;
+
+        &::placeholder {
+          color: $muted;
+        }
+      }
+    }
+  }
+
+  .download {
+    width: 100%;
+    max-width: 22rem;
+    padding: 0.6rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    border: 0.125rem solid #ffd27a;
+    border-radius: 0.8rem;
+    background: linear-gradient(180deg, #ffc247 0%, $orange 50%, #d97a00 100%);
+    box-shadow: 0 0 1.5rem rgba(255, 165, 31, 0.6);
+    color: #2a1800;
+    cursor: pointer;
+    transition: transform 0.15s, filter 0.15s;
+
+    &:hover {
+      filter: brightness(1.08);
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+
+    &:focus-visible {
+      outline: 0.125rem solid $blue;
+      outline-offset: 0.25rem;
+    }
+
+    .icon {
+      width: 1.5rem;
+      height: 1.5rem;
+      object-fit: contain;
+    }
+
+    .text {
+      font-size: 1.2rem;
+      font-weight: 800;
+      letter-spacing: 0.06rem;
+    }
+  }
+
+  // Desktop
+  @media (min-width: 48rem) {
+    padding: 4rem 2.5rem;
+    gap: 2rem;
+
+    .card {
+      max-width: 28rem;
+      gap: 2rem;
+
+      .options {
+        gap: 1.5rem;
+
+        .option .button .name {
+          font-size: 1rem;
+        }
+      }
+
+      .url {
+        padding: 0.9rem 1.1rem;
+
+        input {
+          font-size: 0.95rem;
+        }
+      }
+    }
+
+    .download {
+      max-width: 28rem;
+    }
+  }
+
+  // Celulares pequenos
+  @media (max-width: 24rem) {
+    padding: 1.75rem 1rem;
+    gap: 1.25rem;
+
+    .card .options {
+      gap: 0.75rem;
+    }
+  }
+}
