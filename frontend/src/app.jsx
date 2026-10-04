@@ -7,34 +7,37 @@ import AddLink from "/icons/addLink.svg";
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: import.meta.env.VITE_BACK_END_URL
+    baseURL: "http://localhost:5010",
 });
+
+function extrairNomeArquivo(disposition, typeArchive) {
+    const fallback = typeArchive === "Video" ? "video.mp4" : "music.mp3";
+    if (!disposition) return fallback;
+
+    const matchUtf8 = disposition.match(/filename\*=UTF-8''([^;]+)/i);
+    if (matchUtf8) return decodeURIComponent(matchUtf8[1]);
+
+    const match = disposition.match(/filename="?([^";]+)"?/i);
+    return match?.[1] || fallback;
+}
+
+function dispararDownload(blob, nomeArquivo) {
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.href = url;
+    link.download = nomeArquivo;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+}
 
 export default function Home() {
     const [typeArchive, setTypeArchive] = useState("Video");
     const [url, setUrl] = useState("");
     const [baixando, setBaixando] = useState(false);
+    const [progresso, setProgresso] = useState("");
 
-    function extrairNomeArquivo(disposition, typeArchive) {
-        let nomeArquivo = typeArchive === "Video" ? "video.mp4" : "music.mp3";
-        if (disposition) {
-            const match = disposition.match(/filename="?([^"]+)"?/);
-            if (match && match[1]) {
-                nomeArquivo = match[1];
-            }
-        }
-        return nomeArquivo;
-    }
-
-    function dispararDownload(blob, nomeArquivo) {
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = nomeArquivo;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(link.href);
-    }
 
     async function baixarUm(urlVideo) {
         const response = await api.post(
@@ -45,32 +48,32 @@ export default function Home() {
 
         const disposition = response.headers["content-disposition"];
         const nomeArquivo = extrairNomeArquivo(disposition, typeArchive);
-
         dispararDownload(response.data, nomeArquivo);
     }
 
-    async function DownloadType() {
-        if (!url) {
+    async function handleDownload() {
+        if (!url.trim()) {
             alert("Insira um link válido!");
             return;
         }
 
         setBaixando(true);
+        setProgresso("");
+
         try {
-            const infoResp = await api.post("/GetPlaylist", { url });
-            const info = infoResp.data;
+            const { data: info } = await api.post("/GetPlaylist", { url });
 
             if (info.isPlaylist) {
-                console.log(`Baixando playlist: ${info.title} (${info.videos.length} vídeos)`);
-
-                for (let i = 0; i < info.videos.length; i++) {
+                const total = info.videos.length;
+                for (let i = 0; i < total; i++) {
                     const video = info.videos[i];
-                    console.log(`Baixando ${i + 1}/${info.videos.length}: ${video.title}`);
-
+                    setProgresso(`Baixando ${i + 1}/${total}: ${video.title}`);
                     await baixarUm(video.url);
+                    // pequena pausa para não sobrecarregar
                     await new Promise((r) => setTimeout(r, 500));
                 }
             } else {
+                setProgresso("Baixando...");
                 await baixarUm(url);
             }
         } catch (error) {
@@ -78,12 +81,13 @@ export default function Home() {
             alert("Erro ao baixar. Verifique o link e tente novamente.");
         } finally {
             setBaixando(false);
+            setProgresso("");
         }
     }
 
     return (
         <main className="home">
-            <h1 className="title">MgsDownloader</h1>
+            <h1 className="title">Mgs - Downloader</h1>
 
             <section className="card">
                 <div className="options">
@@ -92,11 +96,11 @@ export default function Home() {
                             type="button"
                             className={`button ${typeArchive === "Video" ? "active" : ""}`}
                             onClick={() => setTypeArchive("Video")}
+                            disabled={baixando}
                         >
                             <img className="icon" src={Video} alt="" />
-                            <span className="name">VÍDEO</span>
+                            <span className="name">Vídeo</span>
                         </button>
-                        <span className="caption">VÍDEO</span>
                     </div>
 
                     <div className="option music">
@@ -104,11 +108,11 @@ export default function Home() {
                             type="button"
                             className={`button ${typeArchive === "Music" ? "active" : ""}`}
                             onClick={() => setTypeArchive("Music")}
+                            disabled={baixando}
                         >
                             <img className="icon" src={Music} alt="" />
-                            <span className="name">MÚSICA</span>
+                            <span className="name">Música</span>
                         </button>
-                        <span className="caption">MÚSICA</span>
                     </div>
                 </div>
 
@@ -119,6 +123,7 @@ export default function Home() {
                         value={url}
                         onChange={(e) => setUrl(e.target.value)}
                         placeholder="Cole o link do vídeo ou música aqui..."
+                        disabled={baixando}
                     />
                 </label>
             </section>
@@ -126,11 +131,13 @@ export default function Home() {
             <button
                 type="button"
                 className="download"
-                onClick={DownloadType}
+                onClick={handleDownload}
                 disabled={baixando}
             >
                 <img className="icon" src={Download} alt="" />
-                <span className="text">{baixando ? "BAIXANDO..." : "BAIXAR"}</span>
+                <span className="text">
+                    {baixando ? progresso || "Baixando..." : `Baixar ${typeArchive}`}
+                </span>
             </button>
         </main>
     );

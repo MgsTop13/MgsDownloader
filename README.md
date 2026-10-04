@@ -1,2 +1,2 @@
 # MgsDownloader
-Um projeto para baixar vídeos e músicas usando NodeJs
+Um projeto para baixar vídeos e músicas usando NodeJs, apenas baixe o repositório e altere como quiser!
