@@ -5,9 +5,6 @@ import Video from "/icons/video.svg";
 import Music from "/icons/music.svg";
 import AddLink from "/icons/addLink.svg";
 import axios from "axios";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 const api = axios.create({
     baseURL: import.meta.env.VITE_BACK_END_URL

@@ -15,7 +15,7 @@
     "cors": "^2.8.6",
     "dotenv": "^18.0.5",
     "express": "^5.2.1",
-    "nodemon": "^3.1.14",
+    "nodemon": "^1.14.10",
     "ytdlp-nodejs": "^3.4.5"
   }
 }
