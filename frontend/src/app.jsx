@@ -9,9 +9,8 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-
 const api = axios.create({
-    baseURL: process.env.backEndUrl
+    baseURL: import.meta.env.VITE_BACK_END_URL
 });
 
 export default function Home() {
